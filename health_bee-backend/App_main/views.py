@@ -12,12 +12,13 @@ class UserHomeData(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, format=None):
-        profile_exists_or_not = PatientProfile.objects.filter(user=request.user).exists()
+        user = request.user
+        profile_exists_or_not = PatientProfile.objects.filter(user=user).exists()
 
-        appointments_running = Appointment.objects.filter(user=request.user, status="Scheduled").count()
-        appointments_completed = Appointment.objects.filter(user=request.user, status="Completed").count()
+        appointments_running = Appointment.objects.filter(user=user, status="Scheduled").count()
+        appointments_completed = Appointment.objects.filter(user=user, status="Completed").count()
 
-        total_tests = Appointment.objects.filter(user=request.user, status='Completed').aggregate(Sum('service__services'))
+        total_tests = Appointment.objects.filter(user=user, status='Completed').aggregate(Sum('service__services'))
         total_tests_count = total_tests['service__services__sum'] or 0
 
         return Response({"profile": f"{profile_exists_or_not}", "appointment_running": appointments_running, 'appointment_completed': appointments_completed, 'total_complted': appointments_completed, 'total_tests': f"{total_tests_count}"})
