@@ -18,11 +18,12 @@ class ServiceModelSerializer(serializers.ModelSerializer):
 
 
 class ServiceCartModelSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     services = ServiceModelSerializer(many=True)
 
     class Meta:
         model = ServiceCartModel
-        fields = '__all__'
+        fields = ['id', 'user', 'services', 'created_at']
 
 
 class AppointmentSerializer(serializers.ModelSerializer):

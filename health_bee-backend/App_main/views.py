@@ -31,7 +31,18 @@ class ServiceCartListCreateView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        return ServiceCartModel.objects.filter(user=user)
+        return ServiceCartModel.objects.filter(user=user, bought_status=False)
+
+    def post(self, request, *args, **kwargs):
+        my_data = request.data['services']
+        my_list = eval(my_data)
+        cart = ServiceCartModel.objects.get_or_create(user=request.user, bought_status=False)
+        for i in my_list:
+            # item = ServiceModel.objects.get(id=i)
+            cart[0].services.add(i)
+
+        cart[0].save()
+        return Response({"response": "successfully added!"})
 
 
 class PatientProfileViewSet(viewsets.ModelViewSet):
