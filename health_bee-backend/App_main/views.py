@@ -1,11 +1,10 @@
+from django.db.models import Sum
 from rest_framework import viewsets, permissions, generics
 from rest_framework.response import Response
-from rest_framework.decorators import action
 from rest_framework.views import APIView
 
 from App_main.models import *
 from App_main.serializers import *
-from django.db.models import Sum
 
 
 class UserHomeData(APIView):
@@ -21,7 +20,18 @@ class UserHomeData(APIView):
         total_tests = Appointment.objects.filter(user=user, status='Completed').aggregate(Sum('service__services'))
         total_tests_count = total_tests['service__services__sum'] or 0
 
-        return Response({"profile": f"{profile_exists_or_not}", "appointment_running": appointments_running, 'appointment_completed': appointments_completed, 'total_complted': appointments_completed, 'total_tests': f"{total_tests_count}"})
+        return Response({"profile": f"{profile_exists_or_not}", "appointment_running": appointments_running,
+                         'appointment_completed': appointments_completed, 'total_complted': appointments_completed,
+                         'total_tests': f"{total_tests_count}"})
+
+
+class ServiceCartListCreateView(generics.ListCreateAPIView):
+    serializer_class = ServiceCartModelSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        return ServiceCartModel.objects.filter(user=user)
 
 
 class PatientProfileViewSet(viewsets.ModelViewSet):

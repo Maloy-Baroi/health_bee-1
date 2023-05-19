@@ -20,5 +20,7 @@ urlpatterns = [
     path('service-models/', ServiceModelListCreateView.as_view(), name='service-model-list-create'),
     path('service-models/<int:pk>/', ServiceModelRetrieveUpdateDestroyView.as_view(),
          name='service-model-retrieve-update-destroy'),
-     path('user-home-data/', UserHomeData.as_view(), name='user-home-data'),
+    path('user-home-data/', UserHomeData.as_view(), name='user-home-data'),
+    path('user-home-data/', UserHomeData.as_view(), name='user-home-data'),
+
 ]
